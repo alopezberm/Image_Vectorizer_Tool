@@ -1,0 +1,7 @@
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# Optional but recommended vectorization fallback (no external binary needed)
+# Uncomment if potrace is not installed:
+# vtracer>=0.6.0
