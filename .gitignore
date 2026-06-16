@@ -1,0 +1,31 @@
+# Virtual environments
+.venv/
+venv/
+*venv*/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local working directories (keep the folders + bundled example, ignore everything else)
+input/*
+!input/.gitkeep
+!input/example_diagram.png
+output/*
+!output/.gitkeep
+!output/example_diagram.svg
+!output/example_diagram_clean.png
+!output/example_diagram_text.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/

@@ -11,6 +11,12 @@ import argparse
 import sys
 from pathlib import Path
 
+# Force UTF-8 console output so progress messages never crash on Windows'
+# default cp1252 codepage.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 from src.image_vectorizer import process_image
 from src.image_vectorizer.config import (
     INPUT_DIR,
@@ -61,11 +67,11 @@ def main() -> None:
     params = default_params()
 
     print("Image Vectorizer Tool")
-    print("─" * 50)
+    print("-" * 50)
     print(f"Input  : {input_dir.resolve()}")
     print(f"Output : {output_dir.resolve()}")
     print(f"Images : {len(images)}")
-    print("─" * 50)
+    print("-" * 50)
     print()
 
     results, errors = [], []
@@ -75,16 +81,16 @@ def main() -> None:
         try:
             result = process_image(img_path, output_dir, params=params, save_debug=args.debug)
             results.append(result)
-            print(f"  → {Path(result['png']).name}")
-            print(f"  → {Path(result['svg']).name}  [{result['engine']}]")
+            print(f"  -> {Path(result['png']).name}")
+            print(f"  -> {Path(result['svg']).name}  [{result['engine']}]")
             if result["text_boxes"]:
-                print(f"  → {len(result['text_boxes'])} text region(s) detected")
+                print(f"  -> {len(result['text_boxes'])} text region(s) detected")
         except Exception as exc:
             print(f"  ERROR: {exc}")
             errors.append({"file": str(img_path), "error": str(exc)})
         print()
 
-    print("─" * 50)
+    print("-" * 50)
     print(f"Done: {len(results)} succeeded, {len(errors)} failed.")
 
     if errors:

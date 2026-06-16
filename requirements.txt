@@ -1,21 +1,23 @@
+# Requires Python 3.11 or 3.12. Avoid 3.13+: vtracer's native extension
+# does not yet ship stable wheels for the newest interpreters.
+
 # Core dependencies
 opencv-python>=4.8.0
 numpy>=1.24.0
 Pillow>=10.0.0
 
-# Notebook UI
+# Default vectorization engine — pure pip install, no external binary needed
+vtracer>=0.6.0
+
+# Optional: notebook UI (see notebooks/vectorizer_ui.ipynb)
 ipywidgets>=8.0.0
 matplotlib>=3.7.0
 jupyterlab>=4.0.0
 
-# Vectorization engines — at least one is required:
-#   Option A (recommended): install potrace externally
-#     Windows : choco install potrace  OR  download from https://potrace.sourceforge.net
-#     macOS   : brew install potrace
-#     Linux   : sudo apt install potrace
-#
-#   Option B: Python-only fallback
-# vtracer>=0.6.0
+# Optional: higher-quality vectorization engine (used automatically if installed)
+#   Windows : choco install potrace  OR  download from https://potrace.sourceforge.net
+#   macOS   : brew install potrace
+#   Linux   : sudo apt install potrace
 
 # Optional enhancements:
 # opencv-contrib-python>=4.8.0   # fast skeletonization via ximgproc.thinning

@@ -116,15 +116,34 @@ def _vectorize_vtracer(binary: np.ndarray, svg_path: Path, params: dict) -> bool
 
 def _fix_svg_scale(svg_path: Path, factor: float) -> None:
     """
-    Divide the SVG root width and height by factor to restore the original
-    physical dimensions after vectorizing an upscaled bitmap.
+    Shrink the SVG root width/height by factor to restore the original physical
+    dimensions after vectorizing an upscaled bitmap, and add a viewBox spanning
+    the upscaled pixel space so the (unmodified) path coordinates still map
+    correctly onto the smaller canvas instead of being clipped.
     """
     text = svg_path.read_text(encoding="utf-8")
 
-    def _scale(m: re.Match) -> str:
-        attr, val, unit = m.group(1), float(m.group(2)), m.group(3) or ""
-        return f'{attr}="{val / factor:.4f}{unit}"'
+    width_m  = re.search(r'width="([\d.]+)([a-z%]*)"', text)
+    height_m = re.search(r'height="([\d.]+)([a-z%]*)"', text)
+    if not (width_m and height_m):
+        return
 
-    text = re.sub(r'(width)="([\d.]+)([a-z%]*)"',  _scale, text, count=1)
-    text = re.sub(r'(height)="([\d.]+)([a-z%]*)"', _scale, text, count=1)
+    orig_w, orig_h = float(width_m.group(1)), float(height_m.group(1))
+
+    text = re.sub(
+        r'width="[\d.]+[a-z%]*"',
+        f'width="{orig_w / factor:.4f}"',
+        text, count=1,
+    )
+    text = re.sub(
+        r'height="[\d.]+[a-z%]*"',
+        f'height="{orig_h / factor:.4f}"',
+        text, count=1,
+    )
+
+    if "viewBox" not in text:
+        text = text.replace(
+            "<svg ", f'<svg viewBox="0 0 {orig_w:.4f} {orig_h:.4f}" ', 1,
+        )
+
     svg_path.write_text(text, encoding="utf-8")
